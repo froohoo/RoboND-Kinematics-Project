@@ -191,11 +191,11 @@ def handle_calculate_IK(req):
             
             # Populate response for the IK request
             # In the next line replace theta1,theta2...,theta6 by your joint angle variables
-            if x and (len(req.poses)-x)>4:
-                if abs(theta6-prev_theta6)>1.and abs(theta4-prev_theta4)>1. and abs(theta6 + theta4) < .1:
-                    print("Theta4 / Theta6 Cancel",theta4,theta6)
-                    theta4 = prev_theta4
-                    theta6 = prev_theta6
+	    # Make theta4 and theta6 static for poses after the first, but less than 10 from the end
+	    # to help eliminate all the extraneous wrist rotation that does nothing.
+            if x and (len(req.poses)-x)>10:
+                theta4, theta6 = prev_theta4, prev_theta6
+		
             prev_theta4, prev_theta6 = theta4,theta6
             joint_trajectory_point.positions = [theta1, theta2, theta3, theta4, theta5, theta6]
             joint_trajectory_list.append(joint_trajectory_point)
